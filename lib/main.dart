@@ -34,8 +34,33 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final realController = TextEditingController();
+  final dollarController = TextEditingController();
+  final euroController = TextEditingController();
+
   double dollar;
   double euro;
+
+  void _realChanged(String text){
+    double real = double.parse(text);
+
+    dollarController.text = (real/dollar).toStringAsFixed(2);
+    euroController.text = (real/euro).toStringAsFixed(2);
+  }
+
+  void _dollarChanged(String text){
+    double dollar = double.parse(text);
+
+    realController.text = (dollar * this.dollar).toStringAsFixed(2);
+    euroController.text = (dollar * this.dollar / euro).toStringAsFixed(2);
+  }
+
+  void _euroChanged(String text){
+    double euro = double.parse(text);
+
+    realController.text = (euro * this.euro).toStringAsFixed(2);
+    euroController.text = (euro * this.euro / dollar).toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +105,11 @@ class _HomeState extends State<Home> {
                         size: 150.0,
                         color: Colors.amber,
                       ),
-                      buildTextField("Reais", "R\$ "),
+                      buildTextField("Reais", "R\$ ", realController, _realChanged, TextInputType.number),
                       Divider(),
-                      buildTextField("Dollars", "US\$ "),
+                      buildTextField("Dollars", "US\$ ", dollarController, _dollarChanged, TextInputType.number),
                       Divider(),
-                      buildTextField("Euros", "€ "),
+                      buildTextField("Euros", "€ ", euroController, _euroChanged, TextInputType.number),
                     ],
                   ),
                 );
@@ -96,8 +121,9 @@ class _HomeState extends State<Home> {
   }
 }
 
-Widget buildTextField(String label, String prefix){
+Widget buildTextField(String label, String prefix, TextEditingController textController, Function function, TextInputType textInputType){
   return TextField(
+    controller: textController,
     decoration: InputDecoration(
       labelText: label,
       labelStyle: TextStyle(color: Colors.amber),
@@ -105,5 +131,7 @@ Widget buildTextField(String label, String prefix){
       prefixText: prefix,
     ),
     style: TextStyle(color: Colors.amber, fontSize: 25.0),
+    onChanged: function,
+    keyboardType: textInputType,
   );
 }
