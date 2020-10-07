@@ -42,6 +42,9 @@ class _HomeState extends State<Home> {
   double euro;
 
   void _realChanged(String text){
+    if(_clearAllIfEmpty(text))
+      return;
+
     double real = double.parse(text);
 
     dollarController.text = (real/dollar).toStringAsFixed(2);
@@ -49,6 +52,9 @@ class _HomeState extends State<Home> {
   }
 
   void _dollarChanged(String text){
+    if(_clearAllIfEmpty(text))
+      return;
+
     double dollar = double.parse(text);
 
     realController.text = (dollar * this.dollar).toStringAsFixed(2);
@@ -56,10 +62,29 @@ class _HomeState extends State<Home> {
   }
 
   void _euroChanged(String text){
+    if(_clearAllIfEmpty(text))
+      return;
+
     double euro = double.parse(text);
 
     realController.text = (euro * this.euro).toStringAsFixed(2);
-    euroController.text = (euro * this.euro / dollar).toStringAsFixed(2);
+    dollarController.text = (euro * this.euro / dollar).toStringAsFixed(2);
+  }
+
+  void _clearAll(){
+    realController.text = "";
+    dollarController.text = "";
+    euroController.text = "";
+  }
+
+  bool _clearAllIfEmpty(String text){
+    if(text.isEmpty){
+      _clearAll();
+
+      return true;
+    }
+
+    return false;
   }
 
   @override
